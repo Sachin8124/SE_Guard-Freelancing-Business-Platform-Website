@@ -24,7 +24,7 @@ from collections import defaultdict
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import bcrypt, jwt
+import bcrypt, jwt, certifi
 from pymongo import MongoClient
 from bson import ObjectId
 
@@ -45,7 +45,7 @@ DB_NAME   = os.getenv("DB_NAME", "se_guard_db")
 
 if MONGO_URI:
     try:
-        mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000, tlsCAFile=certifi.where())
         mongo_client.admin.command('ping')
         db = mongo_client[DB_NAME]
         log.info(f"[MongoDB] Connected to {MONGO_URI} - Database: {DB_NAME}")
