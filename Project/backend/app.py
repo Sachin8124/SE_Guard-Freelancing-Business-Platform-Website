@@ -36,7 +36,7 @@ logging.basicConfig(level=logging.INFO, format="[SE-GUARD] %(levelname)s %(messa
 log = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})  # allow frontend on any port
+CORS(app, resources={r"/api/*": {"origins": "https://seguard.netlify.app"}})  # allow frontend on any port
 
 SECRET_KEY = os.getenv("SE_GUARD_SECRET", "se-guard-super-secret-dev-key-2025")
 
