@@ -743,16 +743,25 @@ def add_business_product():
         return _err("Authentication required", 401)
 
     data = request.get_json()
-    required = ["name", "description", "price", "category"]
-    for field in required:
-        if not data.get(field):
+    # Validate required string fields (non-empty)
+    for field in ["name", "description", "category"]:
+        if not str(data.get(field, "")).strip():
             return _err(f"Field '{field}' is required")
+    # Validate price separately to allow 0 as a valid value
+    if data.get("price") is None:
+        return _err("Field 'price' is required")
+    try:
+        price_val = float(data["price"])
+        if price_val < 0:
+            return _err("Price must be non-negative")
+    except (ValueError, TypeError):
+        return _err("Field 'price' must be a valid number")
 
     product = {
-        "name"        : data["name"],
-        "description" : data["description"],
-        "price"       : float(data["price"]),
-        "category"    : data["category"],
+        "name"        : data["name"].strip(),
+        "description" : data["description"].strip(),
+        "price"       : price_val,
+        "category"    : data["category"].strip(),
         "images"      : data.get("images", []),
         "inventory"   : int(data.get("inventory", 0)),
         "discount"    : float(data.get("discount", 0)),
